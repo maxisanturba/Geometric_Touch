@@ -1,0 +1,81 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UIElements;
+using UnityEngine.EventSystems;
+
+public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+{
+    [SerializeField] private Button cubeBut;
+    [SerializeField] private Button cylinderBut;
+    [SerializeField] private Button sphereBut;
+    [SerializeField] private Button coneBut;
+
+
+
+     private enum AllForms { Cube, Cylinder, Sphere, Cone};
+    [SerializeField] AllForms forms;
+
+    public delegate void EventHandler();
+    public event EventHandler InstantciateForm;
+
+    private void Awake()
+    {
+        InstantciateForm += ButtonSelection;
+    }
+
+    private void Start()
+    {
+        switch (forms)
+        {
+            case AllForms.Cube:
+                GeometricAppearance(cube);
+                break;
+            case AllForms.Cylinder:
+                GeometricAppearance(cylinder);
+                break;
+            case AllForms.Sphere:
+                GeometricAppearance(sphere);
+                break;
+            case AllForms.Cone:
+                GeometricAppearance(cone);
+                break;
+            default:
+                Debug.Log("Ningún objeto seleccionado.");
+                break;
+        }
+    }
+
+    private void Update()
+    {
+        InstantciateForm?.Invoke();
+    }
+
+    public void ButtonSelection()
+    {
+    //    if (cubeBut.point)
+            forms = AllForms.Cube;
+        if (cylinderBut.HasMouseCapture())
+            forms = AllForms.Cylinder;
+        if (sphereBut.HasMouseCapture())
+            forms = AllForms.Sphere;
+        if (coneBut.HasMouseCapture())
+            forms = AllForms.Cone;
+        else forms = default;
+    }
+
+    public void GeometricAppearance(GameObject geometricForm)
+    {
+        Instantiate(geometricForm);
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        throw new System.NotImplementedException();
+    }
+}
