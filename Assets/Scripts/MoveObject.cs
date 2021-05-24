@@ -3,57 +3,41 @@ using System.Collections;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
 
-public class MoveObject : MonoBehaviour
+
+public class MoveObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
-    bool isDragged;
+    Vector3 uiInitPos;
+    [SerializeField] GameObject uiGameObject;
+    GameObject panelParent;
+    Transform planeTransform;
 
-    private void Update()
+    private void Start()
     {
-        StartDrag();
-        Dragged();
-        EndDrag();
+        uiInitPos = transform.localPosition;
+        planeTransform = GameObject.FindWithTag("Plane").transform;
+        panelParent = GameObject.FindWithTag("Panel");
     }
 
-    private void StartDrag()
+    public void OnBeginDrag(PointerEventData eventData)
     {
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
-            Physics.Raycast(ray, out RaycastHit hit);
-            Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.red);
-
-            if (hit.collider == this.GetComponent<Collider>())
-            {
-                isDragged = true;
-                this.GetComponent<Rigidbody>().useGravity = false;
-            }
-        }
+        transform.parent = null;
+        transform.localScale = Vector3.one;
+        transform.up = planeTransform.up;
     }
 
-    private void Dragged()
+    public void OnDrag(PointerEventData eventData)
     {
-        float fixedHeight = 2;
-
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved)
-        {
-            if (isDragged)
-            {
-                Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
-                Physics.Raycast(ray, out RaycastHit hit);
-                Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.red);
-                Vector3 newPosition = new Vector3(hit.point.x , fixedHeight, hit.point.z);
-                transform.position = Vector3.Lerp(transform.position, newPosition, Time.deltaTime * 10);
-            }
-        }
-            
+        Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
+        Physics.Raycast(ray, out RaycastHit hit);
+        float height = planeTransform.position.y + (GetComponent<MeshFilter>().mesh.bounds.size.y / 2);
+        Vector3 newPos = new Vector3(hit.point.x, height, hit.point.z);
+        transform.position = Vector3.Lerp(transform.position, newPos, Time.deltaTime * 10);
     }
 
-    private void EndDrag()
+    public void OnEndDrag(PointerEventData eventData)
     {
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
-        {
-            isDragged = false;
-            this.GetComponent<Rigidbody>().useGravity = true;
-        }
+        GameObject go = Instantiate(uiGameObject, panelParent.transform);
+        go.transform.localPosition = uiInitPos;
+        go.transform.localScale = Vector3.one * 100;
     }
 }

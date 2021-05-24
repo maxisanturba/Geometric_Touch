@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Form
+  - Plane
+  - Panel
   layers:
   - Default
   - TransparentFX
