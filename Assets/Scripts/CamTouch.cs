@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CamTouch : MonoBehaviour
 {
+    //Rehacer Camara. 
 
     private void Update()
     {

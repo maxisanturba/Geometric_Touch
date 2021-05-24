@@ -24,7 +24,7 @@ public class PressDetector : MonoBehaviour, IDragHandler, IEndDragHandler
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        Instantiate(formToInstantiate, endPos, Quaternion.identity);
+        Instantiate(formToInstantiate, endPos, Quaternion.identity, null);
         transform.localPosition = initPos;
     }
 }

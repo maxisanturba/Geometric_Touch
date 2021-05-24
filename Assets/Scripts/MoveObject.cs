@@ -41,7 +41,7 @@ public class MoveObject : MonoBehaviour
                 Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
                 Physics.Raycast(ray, out RaycastHit hit);
                 Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.red);
-                Vector3 newPosition = new Vector3(ray.direction.x + (ray.origin.x / 2), fixedHeight, ray.direction.z + (ray.origin.z / 2));
+                Vector3 newPosition = new Vector3(hit.point.x , fixedHeight, hit.point.z);
                 transform.position = Vector3.Lerp(transform.position, newPosition, Time.deltaTime * 10);
             }
         }
